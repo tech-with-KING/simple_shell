@@ -9,9 +9,18 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <dirent.h>
 int main(int argc , char *argv[]){
 	char *wd = getcwd(NULL,0);
-	printf("%s\n",wd);
-	free(wd);
+	DIR *d;
+	struct dirent *dir;
+	d = opendir(".");
+	if (d) {
+		while ((dir = readdir(d)) != NULL) {
+			printf("%s  ", dir->d_name);
+		}
+		printf("\n");
+		closedir(d);
+	}
 	return (0);
 }

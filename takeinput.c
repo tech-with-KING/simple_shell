@@ -10,24 +10,30 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <ctype.h>
-
-
+#include <unistd.h>
 int main(int arg, char* argv[])
 {
 	char command[99] ;
+	char ch;
 	
-	printf("<--------BIN/LS----------->\n");
 	do {
-		printf("(~$)");
+		printf("($)");
 		scanf("%s", command);
-		printf("(~s)%s\n",command);
-		if (strcmp(command, "PWD")==0) {
-			printf("pwd");
+		if (strcmp(command, "pwd")==0) {
+			execv("./pwd",argv);
 		}
 		else if (strcmp(command, "cd")==0) {
-			printf("cd");
+			execv("./cd", argv);
 		}
-		
-	}while (strcmp(command, "exit")!=0);
+		else if (strcmp(command, "ls")==0) {
+			execv("./ls", argv);
+		}
+		else if (strcmp(command, "echo")==0) {
+			execv("./echo", argv);
+		}
+		else if (strcmp(command, "env")==0) {
+			execv("./env", argv);
+		}
+	}while (strcmp(command, "exit")!=0 && (ch = getchar() != EOF));
 	return (0);
 }
