@@ -9,19 +9,32 @@
 #include "dirent.h"
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <ctype.h>
 #include <unistd.h>
 int main(int arg, char* argv[])
 {
-	char command[99] ;
+	char *command ;
+	int proccess = fork();
+	char com[] = "heoolo boy 'hi there to my lovely friend'>>a.ou";
+	char *piece = strtok(com," ");
+	printf("%s\n",piece);
 	char ch;
-	
+	 piece = strtok(NULL," ");
+	printf("%s\n",piece);
+	piece = strtok(NULL,"''");
+	printf("%s\n",piece);
+	piece = strtok(NULL,"");
+	printf("%s\n",piece);
+	piece = strtok(NULL,">");
+	printf("%s\n",piece);
 	do {
 		printf("($)");
 		scanf("%s", command);
 		if (strcmp(command, "pwd")==0) {
 			execv("./pwd",argv);
 		}
+		
 		else if (strcmp(command, "cd")==0) {
 			execv("./cd", argv);
 		}
