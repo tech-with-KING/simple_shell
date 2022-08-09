@@ -8,9 +8,16 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <ctype.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <dirent.h>
-int main(int argc , char *argv[]){
+int main(int argc, char *argv[])
+{
+
+
+
+	printf("child");
+
 	char *wd = getcwd(NULL,0);
 	DIR *d;
 	struct dirent *dir;
@@ -18,6 +25,7 @@ int main(int argc , char *argv[]){
 	if (d) {
 		while ((dir = readdir(d)) != NULL) {
 			printf("%s  ", dir->d_name);
+
 		}
 		printf("\n");
 		closedir(d);

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <sys/unistd.h>
 #include <sys/user.h>
-#include <fcntl.h>
+#include "shell.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -14,6 +14,7 @@
 #include <unistd.h>
 int main(int arg, char* argv[])
 {
+	
 	char *command ;
 	int proccess = fork();
 	char com[] = "heoolo boy 'hi there to my lovely friend'>>a.ou";
@@ -27,12 +28,12 @@ int main(int arg, char* argv[])
 	piece = strtok(NULL,"");
 	printf("%s\n",piece);
 	piece = strtok(NULL,">");
-	printf("%s\n",piece);
 	do {
 		printf("($)");
 		scanf("%s", command);
 		if (strcmp(command, "pwd")==0) {
-			execv("./pwd",argv);
+			shell_exec(command, argv);
+
 		}
 		
 		else if (strcmp(command, "cd")==0) {
@@ -49,4 +50,13 @@ int main(int arg, char* argv[])
 		}
 	}while (strcmp(command, "exit")!=0 && (ch = getchar() != EOF));
 	return (0);
+}
+int shell_exec(char* args, char **argv){
+	int id = fork();
+	if(id == 0)
+	{
+		execv(args,argv);
+	}
+	wait(NULL);
+	return 0;
 }

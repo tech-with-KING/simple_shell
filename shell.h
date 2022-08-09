@@ -12,6 +12,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <ctype.h>
-
+char *shell_readline(void);
+char **shell_split_line(char *line);
+int  shell_exec(char* args,char **argv);
 #endif 
        
