@@ -14,10 +14,6 @@
 int main(int argc, char *argv[])
 {
 
-
-
-	printf("child");
-
 	char *wd = getcwd(NULL,0);
 	DIR *d;
 	struct dirent *dir;

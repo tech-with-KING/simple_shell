@@ -1,224 +1,247 @@
-----------------------
-Command Line Arguments
-----------------------
-
-Example:  ./word-count -b -sort SelectionSort -suf < textfile
-
--b | -a | -s
-  (required) Specifies the type of tree for storing (word, count) pair
-  possible trees are Binary search tree, Avl tree, and Splay tree
-
-    -b - Count frequencies using an unbalanced binary search tree 
-    -a - Count frequencies using an AVL tree 
-    -s - Count frequencies using a splay tree 
-
--sort SelectionSort | MergeSort | HeapSort
-  (optional) Specifies the type of sort.  
-  If -sort is omitted, HeapSort is used
-
--suf
-  (optional) Turns on suffix checker
-
--------------------------
-Design Decisions & Issues
--------------------------
-Since we stereotype against english majors, let's avoid writing this in an
-essay format...
-
-Q.  The original BinarySearchTree::Insert() resolves key collosion by
-overwriting the old value with the new value.  How does the modified insert
-functions resolve key collosions?
-
-A.  The modified insert functions resolve key collosions by adding the new
-value to the old value.  For example, if there exists a key K with a value 3,
-and we wanted to insert a key K with value 2, the Insert function would change
-the value to 3+2=5.  For our word-count, every key is inserted with a value 1.
-However, it's easy to see that the insert functions allow different changes to
-be made to the existing key-value tree.
-    Consequently, the + operator must be overloaded for the ValueType.  
-
-
-Q.  What is the relationship between the AVLNode class and the BSTNode class?
-
-A.  The AVLNode is-a BSTNode.  Since the AVLTree inherits and uses many
-methods from the BinarySearchTree (which operates on BSTNodes), the nodes used
-by the AVLTree must be compatible.
-    The difference between AVLNode and its ancestor is that each AVLNode
-remembers its height information.   This is because the AVL rotations
-frequently compares the height of its subtrees, and it would be inefficent if
-we had to recursively calculate such info.
+<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
+<a name="readme-top"></a>
+<!--
+*** Thanks for checking out the Best-README-Template. If you have a suggestion
+*** that would make this better, please fork the repo and create a pull request
+*** or simply open an issue with the tag "enhancement".
+*** Don't forget to give the project a star!
+*** Thanks again! Now go create something AMAZING! :D
+-->
 
 
 
-Class Hierachy
-
-		|-------------------------|             |------------|
-                |     BinarySearchTree    |--has-a----->|   BSTNode  |
-                |-------------------------|             |------------|
-                           ^    ^                           ^  ^
-                          /      \                          |  |
-                       is-a     is-a                        |  |
-                        /          \                        |  |
-                       /           |--------------|         |  |
-                      /            |  SplayTree   |-has-a---|  |
-                     /             |--------------|            |
-                    /                                        is-a 
-                   /                                           |
-    |----------------|                                  |------------|
-    |     AVLTree    |--has-a-------------------------->| AVLNode    |
-    |----------------|                                  |------------|
-   
+<!-- PROJECT SHIELDS -->
+<!--
+*** I'm using markdown "reference style" links for readability.
+*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
+*** See the bottom of this document for the declaration of the reference variables
+*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
+*** https://www.markdownguide.org/basic-syntax/#reference-style-links
+-->
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
 
 
-Q.  There is no SplayNode class.  Why does SplayTree use BSTNodes?
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/github_username/repo_name">
+    <img src="images/logo.png" alt="Logo" width="80" height="80">
+  </a>
 
-A.  The SplayTree class uses BSTNode, while the AVLTree uses AVLNode. The idea
-is that AVLTree needs to keep track of the height information. On the other
-hand, SplayTree doesn't need to have height information. This is very similar
-to BSTNode class, so there's no need to make a SplayNode class.
+<h3 align="center">project_title</h3>
 
-
-Q.  What are the similarities and differences between AVLTree rotation methods
-and SplayTree rotation methods?  Why are they not methods of BinarySearchTree
-class or the node classes?
-
-A.  They are basically the same. However, for the AVLTree rotations, they need
-to update the height information while the SplayTree's methods don't. These
-methods could have been methods of BinarySearchTree, so that AVLTree and
-SplayTree can inherit them; however, BST doesn't use rotation at all. We then
-came to the decision of making each of the AVLTree, SplayTree different
-rotation methods.
-
-
-Q.  The Heap class does not allocate any memory--it shares the data.  Why?
-
-A.  It makes it faster =)
-
-
-Q.  Sort() is currently a method of HeapSort.  The alternative is to define an
-external HeapSort() function that is a friend of the Heap class--HeapSort()
-still needs to call the PercDown() function.  Why did we choose to make
-HeapSort a function inside the Heap class?
-
-A.  We think that our special(ized) Heap should know how to sort itself. :)
+  <p align="center">
+    project_description
+    <br />
+    <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/github_username/repo_name">View Demo</a>
+    ·
+    <a href="https://github.com/github_username/repo_name/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/github_username/repo_name/issues">Request Feature</a>
+  </p>
+</div>
 
 
------------------------
-Word Frequency Analysis
------------------------
 
-These were the steps to the process:
-    1 ) run word-count on each essay
-    2 ) record the frequency for the top 28 most frequent words and
-	take a subtotal for each (this will be the total number of
-	'relevant' words in each literature)
-    3 ) isolate the words that made it to top 7 (there were 10), and
-	take their percentage with respect to the subtotals
-    4 ) anaylze by comparing the percentages
-
-Of the 10 words to anaylze, words not used at predictable frequencies by Sir
-Francis Bacon (is, in, you) were ignored.  That left 6 words that are used
-at predictable frequencies by Bacon (of, the, and, that, to, a), and 1 word
-that is not used significantly by Bacon (I).  Two of the 6 words used
-frequently and predictably by Bacon (to, a) were used just as frequent
-and predictable in Hamlet and All's Well that Ends Well.  On the other hand,
-the 4 remaining words (of, the, and, that), which also happens to be the words
-used the most frequent by Bacon, are used at only 1/2 to 2/3 the frequency by
-the author of Hamlet and All's Well that Ends Well.  The minor similarities
-hardly make up for the major differeces.  Based on the above analysis, we 
-conclude that Bacon wrote neither of Shakespeare's plays.
-	
-
----------
-Profiling
----------
-
-Our expected performance bottlenecks for the word-count program are...
-	+ the Splay operation for SplayTree
-	+ the insertHelp function for AVL, and
-	+ the PercolateDown operation for Heap
-We chose these to be the bottlenecks because we assumed the function call
-frequencies and costs. However, it turned out that some of these are not huge
-bottlenecks at all. For example, Splay funtion doesn't take as much time as we
-thought.  Words that are inserted frequently don't take so much rotations
-because they are already close to the root.
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#acknowledgments">Acknowledgments</a></li>
+  </ol>
+</details>
 
 
-  %   cumulative   self              self     total           
- time   seconds   seconds    calls  ns/call  ns/call  name    
 
-  1.05      1.55     0.02                             SplayTree<>::Splay()
-  4.26      0.45     0.10	                      AVLTree<>::insertHelp()
-  1.28      1.76     0.03                             Heap::percDown()
+<!-- ABOUT THE PROJECT -->
+## About The Project
 
+[![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-The gprof results show that, in general standard I/O operations takes up most 
-of the runtime:
+Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
 
-
-index % time    self  children    called     name
-[2]     24.3    0.05    0.52   45429         next_token()
-[3]     20.0    0.05    0.42                 operator<<()
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-Even though each word is only read/printed once, we think the cause for I/O
-as a bottleneck is its huge constant overhead (which much exceeds the log n
-tree operations)
 
-For specific choice of trees and input, namely bst tree with word.txt as
-input, the biggest bottleneck was string operations and FindNode() function. 
-The cause is that the pre-sorted words created an unbalanced binary search
-tree, requiring a complete traversal of a linked-list-like data structure
-everytime a word is inserted.  At each node visited during the traversal,
-FindNode compares the string keys.
+### Built With
 
+* [![Next][Next.js]][Next-url]
+* [![React][React.js]][React-url]
+* [![Vue][Vue.js]][Vue-url]
+* [![Angular][Angular.io]][Angular-url]
+* [![Svelte][Svelte.dev]][Svelte-url]
+* [![Laravel][Laravel.com]][Laravel-url]
+* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
+* [![JQuery][JQuery.com]][JQuery-url]
 
-index % time    self  children    called     name
-                                                 <spontaneous>
-[1]     75.6  167.51  533.04                 std::string::compare()
-               99.37  235.36 3408496094/3408541521     std::string::size()
-               35.05   81.63 1704248047/1704293468     std::string::data() 
-               81.63    0.00 1704248047/2523092351     std::string::_M_data()
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-Another significant operation which we overlooked (for the AVLTree) is the
-UpdateHeight function (which actually took 3.8 percent of the run time).
 
-  %   cumulative   self              self     total           
- time   seconds   seconds    calls  ns/call  ns/call  name    
-  3.83      0.54     0.09                             AVLTree<>::updateHeight()
+<!-- GETTING STARTED -->
+## Getting Started
+
+This is an example of how you may give instructions on setting up your project locally.
+To get a local copy up and running follow these simple example steps.
+
+### Prerequisites
+
+This is an example of how to list things you need to use the software and how to install them.
+* npm
+  ```sh
+  npm install npm@latest -g
+  ```
+
+### Installation
+
+1. Get a free API Key at [https://example.com](https://example.com)
+2. Clone the repo
+   ```sh
+   git clone https://github.com/github_username/repo_name.git
+   ```
+3. Install NPM packages
+   ```sh
+   npm install
+   ```
+4. Enter your API in `config.js`
+   ```js
+   const API_KEY = 'ENTER YOUR API';
+   ```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
---------------------
-Algorithmic Analysis
---------------------
 
-From our "SelectionSortSort vs. HeapSort" plot, we can see that when N is greater than
-8000, selectionsort function grows faster than heapsort function. This confroms our knowledge
-that heap sort has better performance than selecion sort in terms of time.
+<!-- USAGE EXAMPLES -->
+## Usage
 
-We know that both mergesort(f) and heapsort(g)  have O(n logn) runing time.
-In our "MergeSort vs. HeapSort" plot, two lines are parallel to each other most of the time.
-This shows that f/g = constant, which means that the runing time of the two algorithms are different
-by a constant factor.
+Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
-------------------------------
-Word Stemming and Punctuations
-------------------------------
- For the punctuation part, we use the built in function "ispunct(c)" to check if 
-the character is a punctuation or a character. If it is a punctuation, then 
-just ignore (treat it like a space). However, due to the nature of 
-the ispunct(c) function - it considers " ' " and " - " as
-punctuations - there are chances for the side effects happen: "I'd" will be read as 2 
-different words: "I" and "d", same as "he's" becomes "he" and "s". The other case can 
-be "ice-cream" becomes "ice" and "cream". Therefore, we came to the decision of 
-using one of our own functions--ispunctuation(c)--to eliminate the case 's and 'd, 
-and '-'. This function will call ispunct(c) if c is not the ' and -. 
+_For more examples, please refer to the [Documentation](https://example.com)_
 
- For the word-stemming part, two stemming kinds are taken care: 
-words end with -s and with -ly. Due to our language skill limitations,
-we cannot check all the cases and all the exceptions. We have tried our best to check 
-all of the cases that we think of. Also, since " 'd ", " 's " is in the scope above,
-we remove them as well. For this option, one needs to add "-suf" in the command line as
-mentioned above.
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- ROADMAP -->
+## Roadmap
+
+- [ ] Feature 1
+- [ ] Feature 2
+- [ ] Feature 3
+    - [ ] Nested Feature
+
+See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- CONTRIBUTING -->
+## Contributing
+
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+Don't forget to give the project a star! Thanks again!
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- LICENSE -->
+## License
+
+Distributed under the MIT License. See `LICENSE.txt` for more information.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- CONTACT -->
+## Contact
+
+Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
+
+Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgments
+
+* []()
+* []()
+* []()
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
+[contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
+[forks-url]: https://github.com/github_username/repo_name/network/members
+[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
+[stars-url]: https://github.com/github_username/repo_name/stargazers
+[issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
+[issues-url]: https://github.com/github_username/repo_name/issues
+[license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
+[license-url]: https://github.com/github_username/repo_name/blob/master/LICENSE.txt
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://linkedin.com/in/linkedin_username
+[product-screenshot]: images/screenshot.png
+[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
+[Next-url]: https://nextjs.org/
+[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React-url]: https://reactjs.org/
+[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
+[Vue-url]: https://vuejs.org/
+[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
+[Angular-url]: https://angular.io/
+[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
+[Svelte-url]: https://svelte.dev/
+[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
+[Laravel-url]: https://laravel.com
+[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
+[Bootstrap-url]: https://getbootstrap.com
+[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
+[JQuery-url]: https://jquery.com 

@@ -22,8 +22,9 @@ int main(int arg, char* argv[])
 	/* main function loop checks for EOF command else continues execution */
 	
 	do {
-		printf("($)");
+
 		scanf("%s", command);
+		shell_split_line(command);
 		if (strcmp(command, "pwd")==0) {
 			shell_exec(command, argv);
 
@@ -51,8 +52,21 @@ int main(int arg, char* argv[])
 
 /* the shell exec function h */
 /*this cannot be in the main fuction because the fork command will cause other processes*/
-
-int shell_exec(char* args, char **argv){
+char **shell_split_line(char *line)
+{
+	char *first_command;
+	first_command = strtok(line," ");
+	printf("%s",first_command);
+	first_command = strtok(line," ");
+	printf("%s",first_command);
+	first_command = strtok(line," ");
+	printf("%s",first_command);
+	char **neld;
+	neld = &first_command;
+	return (neld);
+}
+int shell_exec(char *args, char **argv)
+{
 	int id = fork();
 	if(id == 0)
 	{
